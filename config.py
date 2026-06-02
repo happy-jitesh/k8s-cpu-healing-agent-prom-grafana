@@ -1,4 +1,4 @@
-PROMETHEUS_URL = "http://monitoring-kube-prometheus-prometheus:9090"
+PROMETHEUS_URL = "http://localhost:9090"
 
 NAMESPACE = "prod"
 
@@ -12,7 +12,7 @@ CHECK_INTERVAL = 30
 
 # OpenAI Compatible Endpoint
 
-BASE_URL = "http://host.minikube.internal:11434/v1"
+BASE_URL = "http://localhost:11434/v1"
 
 API_KEY = "ollama"
 
