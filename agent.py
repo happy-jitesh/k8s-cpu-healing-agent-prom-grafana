@@ -5,15 +5,12 @@ from config import CHECK_INTERVAL
 from llm_client import ask_llm
 
 from prometheus_client import (
-    get_cpu_usage
+    get_cpu_utilization
 )
 
 from k8s_controller import (
     get_replicas,
-    get_cpu_limit,
     scale_deployment,
-
-
     increase_cpu_limit
 )
 
@@ -51,26 +48,18 @@ def controller():
                 "================================================"
             )
 
-            # Get CPU Usage
-            cpu_used = get_cpu_usage()
-
-            # Get Deployment CPU Limit
-            cpu_limit = get_cpu_limit()
+            cpu_percent = get_cpu_utilization()
 
             # Get Current Replicas
             replicas = get_replicas()
 
-            # Calculate Utilization %
-            cpu_percent = (
-                cpu_used / cpu_limit
-            ) * 100
-
+           
             print(
                 f"\n🔥 CPU Utilization : {cpu_percent:.2f}%"
             )
 
             print(
-                f"⚙️ CPU Limit       : {cpu_limit} cores"
+                "📈 CPU Metric Source : Prometheus"
             )
 
             print(
@@ -86,8 +75,6 @@ def controller():
 Deployment Name: cpu-demo-app
 
 CPU Utilization: {cpu_percent:.2f}%
-
-Current CPU LIMIT: {cpu_limit} cores
 
 Current Replicas: {replicas}
 

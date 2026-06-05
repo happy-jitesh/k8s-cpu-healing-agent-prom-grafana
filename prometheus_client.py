@@ -3,22 +3,35 @@ import requests
 from config import PROMETHEUS_URL
 
 
-def get_cpu_usage():
+def get_cpu_utilization():
 
     query = """
-sum(
-rate(
-container_cpu_usage_seconds_total{
-namespace="prod",
-pod=~"cpu-demo-app-.*"
-}[1m]
-))
+100 *
+avg(
+  rate(
+    container_cpu_usage_seconds_total{
+      namespace="prod",
+      pod=~"cpu-demo-app-.*",
+      container!="POD"
+    }[1m]
+  )
+)
+/
+avg(
+  kube_pod_container_resource_limits{
+    namespace="prod",
+    pod=~"cpu-demo-app-.*",
+    resource="cpu"
+  }
+)
 """
 
     response = requests.get(
         f"{PROMETHEUS_URL}/api/v1/query",
         params={"query": query}
     )
+
+    response.raise_for_status()
 
     result = response.json()["data"]["result"]
 
