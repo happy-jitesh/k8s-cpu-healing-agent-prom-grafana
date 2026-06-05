@@ -87,6 +87,8 @@ Deployment Name: cpu-demo-app
 
 CPU Utilization: {cpu_percent:.2f}%
 
+Current CPU LIMIT: {cpu_limit} cores
+
 Current Replicas: {replicas}
 
 {PROMPT}
