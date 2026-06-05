@@ -108,7 +108,7 @@ E -->|CPU Healthy| H[Do Nothing]
 | Ollama                   | Local LLM runtime       |
 | Llama3                   | AI reasoning engine     |
 | Kubernetes Python Client | Cluster automation      |
-| Docker                   | Container packaging     |
+
 
 ---
 
@@ -130,11 +130,9 @@ ai-cpu-healing-agent/
 │   ├── cpu-demo-app.yaml
 │   ├── service.yaml
 │   ├── servicemonitor.yaml
-│   ├── agent-deployment.yaml
-│   └── rbac.yaml
+│   
 │
 ├── requirements.txt
-├── Dockerfile
 │
 └── README.md
 ```
@@ -208,6 +206,7 @@ kubectl get nodes
 
 ```bash
 kubectl create namespace prod
+kubectl create namespace monitoring
 ```
 
 ---
@@ -371,13 +370,22 @@ container_cpu_usage_seconds_total
 ## CPU Usage
 
 ```promql
-sum(
+100 *
+avg(
 rate(
 container_cpu_usage_seconds_total{
 namespace="prod",
 pod=~"cpu-demo-app-.*"
 }[1m]
 ))
+/
+avg(
+kube_pod_container_resource_limits{
+namespace="prod",
+pod=~"cpu-demo-app-.*",
+resource="cpu"
+}
+)
 ```
 
 ---
@@ -407,18 +415,6 @@ This project demonstrates how the same AI Agent can switch between:
 * OpenRouter
 
 using only configuration changes while keeping the business logic unchanged.
-
----
-
-# 🚀 Future Enhancements
-
-* Multi-metric decisions
-* Cost-aware scaling
-* AI Root Cause Analysis
-* Auto-remediation workflows
-* Incident memory
-* Slack integration
-* Multi-cluster support
 
 ---
 
