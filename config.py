@@ -4,10 +4,6 @@ NAMESPACE = "prod"
 
 DEPLOYMENT_NAME = "cpu-demo-app"
 
-CPU_SCALE_THRESHOLD = 0.80
-
-CPU_PATCH_THRESHOLD = 0.50
-
 CHECK_INTERVAL = 30
 
 # OpenAI Compatible Endpoint

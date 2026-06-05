@@ -24,6 +24,23 @@ def get_replicas():
     return deployment.spec.replicas
 
 
+def get_cpu_limit():
+
+    deployment = apps.read_namespaced_deployment(
+        DEPLOYMENT_NAME,
+        NAMESPACE
+    )
+
+    cpu_limit = deployment.spec.template.spec.containers[
+        0
+    ].resources.limits["cpu"]
+
+    if cpu_limit.endswith("m"):
+        return int(cpu_limit.replace("m", "")) / 1000
+
+    return float(cpu_limit)
+
+
 def scale_deployment(new_replicas):
 
     body = {
@@ -52,14 +69,18 @@ def increase_cpu_limit():
 
     container = deployment.spec.template.spec.containers[0]
 
-    container.resources = {
-        "limits": {
-            "cpu": "1000m"
-        },
-        "requests": {
-            "cpu": "500m"
-        }
-    }
+    current_limit = container.resources.limits["cpu"]
+
+    if current_limit.endswith("m"):
+        current_limit = int(
+            current_limit.replace("m", "")
+        )
+
+        new_limit = current_limit + 200
+
+        container.resources.limits["cpu"] = (
+            f"{new_limit}m"
+        )
 
     apps.patch_namespaced_deployment(
         DEPLOYMENT_NAME,
@@ -68,5 +89,5 @@ def increase_cpu_limit():
     )
 
     print(
-        "🔥 CPU limits increased"
+        f"🔥 CPU limit increased to {new_limit}m"
     )
